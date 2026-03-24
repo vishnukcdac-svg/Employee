@@ -1,5 +1,6 @@
 package com.employee.service;
 
+import com.employee.exceptions.ResourceNotFoundExceptions;
 import com.employee.model.dto.EmployeeDto;
 import com.employee.model.entity.Employee;
 import com.employee.repository.EmployeeRepository;
@@ -39,7 +40,7 @@ public class EmployeeServiceImpl implements EmployeeService{
 
     @Override
     public EmployeeDto getEmployeeById(Long id) {
-        Employee employee=employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+        Employee employee=employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundExceptions("Employee not found with id : "+id));
         return modelMapper.map(employee, EmployeeDto.class);
     }
 
@@ -53,7 +54,7 @@ public class EmployeeServiceImpl implements EmployeeService{
         if (!Objects.equals(id,employeeDto.getId())){
             throw new RuntimeException("Employee id is not matched");
         }
-        employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+        employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundExceptions("Employee not found with id : "+id));
 
         Employee employeeEntity=modelMapper.map(employeeDto, Employee.class);
         Employee updatedEmployee =employeeRepository.save(employeeEntity);
@@ -63,7 +64,7 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public void deleteEmployee(Long id) {
 
-        Employee employee=employeeRepository.findById(id).orElseThrow(() -> new RuntimeException("Employee not found"));
+        Employee employee=  employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundExceptions("Employee not found with id : "+id));
         employeeRepository.delete(employee);
 
     }

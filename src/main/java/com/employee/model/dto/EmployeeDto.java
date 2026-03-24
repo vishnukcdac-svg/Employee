@@ -8,10 +8,9 @@ public class EmployeeDto {
     private  String employeeCode;
     private  String email;
 
+    public EmployeeDto() {
 
-
-
-
+    }
 
     public EmployeeDto(Long id, String employeeName, String company, String employeeCode, String email) {
         this.id = id;

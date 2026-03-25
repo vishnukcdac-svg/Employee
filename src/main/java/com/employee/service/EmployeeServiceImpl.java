@@ -1,5 +1,6 @@
 package com.employee.service;
 
+import com.employee.exceptions.BadRequestExceptions;
 import com.employee.exceptions.ResourceNotFoundExceptions;
 import com.employee.model.dto.EmployeeDto;
 import com.employee.model.entity.Employee;
@@ -48,11 +49,11 @@ public class EmployeeServiceImpl implements EmployeeService{
     public EmployeeDto updateEmployee(Long id, EmployeeDto employeeDto) {
 
         if (id ==null  || employeeDto.getId()==null){
-            throw new RuntimeException("Employee id is required");
+            throw new BadRequestExceptions("Employee id is required");
         }
 
         if (!Objects.equals(id,employeeDto.getId())){
-            throw new RuntimeException("Employee id is not matched");
+            throw new BadRequestExceptions("Employee id is not matched");
         }
         employeeRepository.findById(id).orElseThrow(() -> new ResourceNotFoundExceptions("Employee not found with id : "+id));
 
@@ -72,6 +73,19 @@ public class EmployeeServiceImpl implements EmployeeService{
     @Override
     public List<EmployeeDto> getAllEmployees() {
         List<Employee> employees = employeeRepository.findAll();
+        if(employees.isEmpty()){
+            throw new ResourceNotFoundExceptions("No employees found");
+        }
         return employees.stream().map(employee -> modelMapper.map(employee, EmployeeDto.class)).toList();
+    }
+
+    @Override
+    public EmployeeDto getEmployeeEmployeeCodeAndCompanyName(String employeeCode, String companyName) {
+
+        Employee employee = employeeRepository.findByEmployeeCodeAndCompany(employeeCode, companyName)
+                .orElseThrow(()->new ResourceNotFoundExceptions("Employee Not Found with employeeCode :"+employeeCode+" and companyName :"+companyName));
+
+         EmployeeDto employeeDto = modelMapper.map(employee, EmployeeDto.class);
+         return employeeDto;
     }
 }
